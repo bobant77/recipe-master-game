@@ -125,7 +125,7 @@ export function GameBoard() {
         setShowHint(false)
       }
     }, 2000)
-  }, [gameState, showResult, timeRemaining, showHint, triggerConfetti])
+  }, [gameState, showResult, timeRemaining, showHint, triggerConfetti,selectedAnswer])
 
   useEffect(() => {
     if (gameState.gameStatus === 'playing' && timeRemaining > 0 && !showResult) {

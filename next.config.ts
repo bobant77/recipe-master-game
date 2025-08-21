@@ -1,9 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Enable experimental features for better performance
+  // Remove experimental optimizeCss that's causing the critters error
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true, // Commented out - this was causing the critters module error
   },
   serverExternalPackages: [],
   
@@ -63,16 +63,13 @@ const nextConfig: NextConfig = {
   // Generate ETags for caching
   generateEtags: true,
 
-  // SWC minification is enabled by default in Next.js 15
-  // Removed: swcMinify: true,
-
   // Trailing slash handling
   trailingSlash: true,
 
   // React strict mode
   reactStrictMode: true,
 
-  // Bundle optimization
+  // Simplified webpack config
   webpack: (config: any, { isServer, dev }: { isServer: boolean; dev: boolean }) => {
     // Production optimizations
     if (!dev && !isServer) {
@@ -81,73 +78,14 @@ const nextConfig: NextConfig = {
         fs: false,
       };
     }
-
-    // Optimize bundle splitting
-    if (!dev) {
-      config.optimization = config.optimization || {};
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          // Vendor chunk
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20
-          },
-          // Common chunk
-          common: {
-            name: 'common',
-            minChunks: 2,
-            chunks: 'all',
-            priority: 10,
-            reuseExistingChunk: true,
-            enforce: true
-          },
-          // Framework chunk (React, Next.js)
-          framework: {
-            chunks: 'all',
-            name: 'framework',
-            test: /(?<!node_modules.*)[\\\\/]node_modules[\\\\/](react|react-dom|scheduler|prop-types|use-subscription)[\\\\/]/,
-            priority: 40,
-            enforce: true
-          },
-          // Game-specific libraries
-          gameLibs: {
-            name: 'game-libs',
-            chunks: 'all',
-            test: /[\\\\/]node_modules[\\\\/](framer-motion|canvas-confetti)[\\\\/]/,
-            priority: 30,
-            enforce: true
-          }
-        }
-      };
-    }
-
     return config;
   },
 
   // Redirects for SEO
   redirects: async () => [],
 
-  // Output configuration for different deployment targets
-  output: 'standalone', // For Docker deployments
+  // Simplified output for Vercel
+  output: 'standalone',
 };
 
-// Bundle analyzer - install first: npm install -D @next/bundle-analyzer
-let configWithAnalyzer = nextConfig;
-
-if (process.env.ANALYZE === 'true') {
-  try {
-    const withBundleAnalyzer = require('@next/bundle-analyzer')({
-      enabled: true,
-    });
-    configWithAnalyzer = withBundleAnalyzer(nextConfig);
-  } catch (error) {
-    console.warn('Bundle analyzer not installed. Run: npm install -D @next/bundle-analyzer');
-  }
-}
-
-export default configWithAnalyzer;
+export default nextConfig;
