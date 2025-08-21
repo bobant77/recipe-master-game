@@ -6,7 +6,7 @@ import confetti from 'canvas-confetti'
 import Link from 'next/link'
 
 import { shuffleArray, getRandomElements, calculateScore, getScoreGrade } from '@/lib/utils'
-import type { Recipe, GameQuestion, GameState, PlayerAnswer } from '@/lib/types'
+import type { GameQuestion, GameState, PlayerAnswer } from '@/lib/types'
 import { recipes } from '@/data/receipe'
 
 const TOTAL_QUESTIONS = 5
@@ -56,17 +56,8 @@ export function GameBoard() {
     }))
   }, [])
 
-  // Timer effect
-  useEffect(() => {
-    if (gameState.gameStatus === 'playing' && timeRemaining > 0 && !showResult) {
-      const timer = setTimeout(() => {
-        setTimeRemaining(prev => prev - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else if (timeRemaining === 0 && !showResult) {
-      handleAnswerSubmit('')
-    }
-  }, [timeRemaining, gameState.gameStatus, showResult])
+
+
 
   useEffect(() => {
     if (!showResult) {
@@ -135,6 +126,17 @@ export function GameBoard() {
       }
     }, 2000)
   }, [gameState, showResult, timeRemaining, showHint, triggerConfetti])
+
+  useEffect(() => {
+    if (gameState.gameStatus === 'playing' && timeRemaining > 0 && !showResult) {
+      const timer = setTimeout(() => {
+        setTimeRemaining(prev => prev - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (timeRemaining === 0 && !showResult) {
+      handleAnswerSubmit('')
+    }
+  }, [timeRemaining, gameState.gameStatus, showResult, handleAnswerSubmit])
 
   const handleHint = () => {
     setShowHint(true)
@@ -211,7 +213,9 @@ export function GameBoard() {
     )
   }
 
-  // Compact completion screen
+  // Replace the completion screen section in your GameBoard.tsx
+  // This is the entire completion screen with better Sobeys branding
+
   if (gameState.gameStatus === 'completed') {
     const finalScore = calculateScore(
       gameState.score,
@@ -228,37 +232,37 @@ export function GameBoard() {
     const grade = getScoreGrade(finalScore)
 
     return (
-      <div className="h-screen bg-gradient-to-br from-sobeys-green via-sobeys-blue to-sobeys-dark-green flex items-center justify-center px-4">
+      <div className="h-screen bg-gradient-to-br from-sobeys-light-green via-gray-50 to-white flex items-center justify-center px-4">
         <motion.div
           className="max-w-2xl mx-auto text-center"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-sobeys-yellow via-sobeys-orange to-sobeys-red rounded-2xl blur-lg opacity-75"></div>
-            <div className="relative glass rounded-2xl p-6 border border-white/20 shadow-2xl">
+            {/* Clean white background with subtle shadow instead of gradient blur */}
+            <div className="bg-white rounded-3xl p-8 shadow-2xl border-2 border-sobeys-green/20">
 
               {/* Compact trophy */}
               <motion.div
-                className="relative mb-4"
+                className="relative mb-6"
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ duration: 0.6, type: "spring" }}
               >
-                <div className="w-16 h-16 mx-auto relative">
+                <div className="w-20 h-20 mx-auto relative">
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-sobeys-yellow to-sobeys-orange rounded-full"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                   />
-                  <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
-                    <span className="text-2xl">🏆</span>
+                  <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+                    <span className="text-3xl">🏆</span>
                   </div>
                 </div>
               </motion.div>
 
               <motion.h1
-                className="text-2xl lg:text-3xl font-black mb-2 bg-gradient-to-r from-sobeys-green to-sobeys-blue bg-clip-text text-transparent"
+                className="text-3xl lg:text-4xl font-black mb-4 text-sobeys-green"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -267,7 +271,7 @@ export function GameBoard() {
               </motion.h1>
 
               <motion.p
-                className="text-base text-gray-600 mb-4"
+                className="text-lg text-gray-700 mb-8"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
@@ -275,62 +279,61 @@ export function GameBoard() {
                 {grade.message}
               </motion.p>
 
-              {/* Compact score grid */}
+              {/* Clean score grid with better contrast */}
               <motion.div
-                className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
                 {[
-                  { label: 'Correct', value: `${gameState.score}/${TOTAL_QUESTIONS}`, icon: '✅', color: 'from-sobeys-green to-green-600' },
-                  { label: 'Grade', value: grade.grade, icon: '📊', color: 'from-sobeys-blue to-blue-600' },
-                  { label: 'Score', value: finalScore, icon: '⭐', color: 'from-sobeys-yellow to-sobeys-orange' },
-                  { label: 'Hints', value: gameState.hintsUsed, icon: '💡', color: 'from-sobeys-orange to-sobeys-red' }
+                  { label: 'Correct', value: `${gameState.score}/${TOTAL_QUESTIONS}`, icon: '✅', color: 'border-sobeys-green bg-sobeys-light-green' },
+                  { label: 'Grade', value: grade.grade, icon: '📊', color: 'border-sobeys-blue bg-blue-50' },
+                  { label: 'Score', value: finalScore, icon: '⭐', color: 'border-sobeys-yellow bg-yellow-50' },
+                  { label: 'Hints', value: gameState.hintsUsed, icon: '💡', color: 'border-sobeys-orange bg-orange-50' }
                 ].map((stat, index) => (
                   <motion.div
                     key={index}
                     className="relative group"
-                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileHover={{ scale: 1.03, y: -2 }}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + index * 0.03 }}
+                    transition={{ delay: 0.5 + index * 0.05 }}
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-r ${stat.color} rounded-lg opacity-20 group-hover:opacity-30 transition-opacity`}></div>
-                    <div className="relative bg-white rounded-lg p-3 border border-gray-200 shadow-md">
-                      <div className="text-lg mb-1">{stat.icon}</div>
-                      <div className="text-lg font-black text-gray-800">{stat.value}</div>
-                      <div className="text-xs font-semibold text-gray-600">{stat.label}</div>
+                    <div className={`bg-white rounded-xl p-4 border-2 ${stat.color} shadow-md hover:shadow-lg transition-all`}>
+                      <div className="text-2xl mb-2">{stat.icon}</div>
+                      <div className="text-2xl font-black text-gray-800 mb-1">{stat.value}</div>
+                      <div className="text-sm font-semibold text-gray-600">{stat.label}</div>
                     </div>
                   </motion.div>
                 ))}
               </motion.div>
 
-              {/* Compact action buttons */}
+              {/* Clean action buttons */}
               <motion.div
-                className="space-y-3"
+                className="space-y-4"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <motion.button
                     onClick={restartGame}
-                    className="bg-gradient-to-r from-sobeys-green to-sobeys-dark-green text-white font-bold px-5 py-2 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 justify-center text-sm"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                    className="bg-gradient-to-r from-sobeys-green to-sobeys-dark-green text-white font-bold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-3 justify-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <span className="text-base">🎮</span>
+                    <span className="text-xl">🎮</span>
                     Play Again
                   </motion.button>
 
                   <Link href="/">
                     <motion.button
-                      className="bg-white text-sobeys-green font-bold px-5 py-2 rounded-full border-2 border-sobeys-green hover:bg-sobeys-light-green transition-all flex items-center gap-2 justify-center text-sm"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                      className="bg-white text-sobeys-green font-bold px-8 py-3 rounded-full border-2 border-sobeys-green hover:bg-sobeys-light-green transition-all flex items-center gap-3 justify-center"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <span className="text-base">🏠</span>
+                      <span className="text-xl">🏠</span>
                       Home
                     </motion.button>
                   </Link>
@@ -345,11 +348,11 @@ export function GameBoard() {
                       navigator.clipboard.writeText(shareText)
                     }
                   }}
-                  className="bg-gradient-to-r from-sobeys-orange to-sobeys-red text-white font-bold px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 mx-auto text-xs"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="bg-gradient-to-r from-sobeys-orange to-sobeys-red text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <span className="text-sm">📤</span>
+                  <span className="text-lg">📤</span>
                   Share Your Score
                 </motion.button>
               </motion.div>
@@ -589,12 +592,12 @@ export function GameBoard() {
                             key={index}
                             onClick={() => handleAnswerSelect(option)}
                             className={`w-full p-3 text-left rounded-lg border-2 transition-all font-semibold text-sm ${showCorrectAnswer
-                                ? 'bg-gradient-to-r from-green-100 to-sobeys-light-green border-sobeys-green text-sobeys-green shadow-md'
-                                : showWrongAnswer
-                                  ? 'bg-gradient-to-r from-red-100 to-pink-100 border-sobeys-red text-sobeys-red shadow-md'
-                                  : isSelected
-                                    ? 'bg-gradient-to-r from-sobeys-light-green to-blue-100 border-sobeys-blue text-sobeys-blue shadow-md'
-                                    : 'bg-white border-gray-200 hover:border-sobeys-green hover:bg-sobeys-light-green/30 hover:shadow-md'
+                              ? 'bg-gradient-to-r from-green-100 to-sobeys-light-green border-sobeys-green text-sobeys-green shadow-md'
+                              : showWrongAnswer
+                                ? 'bg-gradient-to-r from-red-100 to-pink-100 border-sobeys-red text-sobeys-red shadow-md'
+                                : isSelected
+                                  ? 'bg-gradient-to-r from-sobeys-light-green to-blue-100 border-sobeys-blue text-sobeys-blue shadow-md'
+                                  : 'bg-white border-gray-200 hover:border-sobeys-green hover:bg-sobeys-light-green/30 hover:shadow-md'
                               }`}
                             disabled={showResult}
                             whileHover={!showResult ? { scale: 1.01, y: -1 } : {}}
@@ -628,8 +631,8 @@ export function GameBoard() {
                           onClick={() => handleAnswerSubmit()}
                           disabled={!selectedAnswer}
                           className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${selectedAnswer
-                              ? 'bg-gradient-to-r from-sobeys-green to-sobeys-dark-green text-white shadow-lg hover:shadow-xl'
-                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            ? 'bg-gradient-to-r from-sobeys-green to-sobeys-dark-green text-white shadow-lg hover:shadow-xl'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                             }`}
                           whileHover={selectedAnswer ? { scale: 1.03 } : {}}
                           whileTap={selectedAnswer ? { scale: 0.97 } : {}}
@@ -650,7 +653,7 @@ export function GameBoard() {
                           <div className="bg-gradient-to-r from-green-100 to-sobeys-light-green rounded-lg p-4 border border-sobeys-green">
                             <div className="text-3xl mb-1">🎉</div>
                             <div className="text-lg font-black text-sobeys-green mb-1">Incredible!</div>
-                            <div className="text-xs text-sobeys-green">You're a culinary detective!</div>
+                            <div className="text-xs text-sobeys-green">You&apos;re a culinary detective!</div>
                           </div>
                         ) : (
                           <div className="bg-gradient-to-r from-red-100 to-pink-100 rounded-lg p-4 border border-sobeys-red">
