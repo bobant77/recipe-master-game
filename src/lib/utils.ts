@@ -30,7 +30,7 @@ export function getScoreGrade(score: number): {
   color: string
   message: string
 } {
-  if (score >= 90) return { grade: 'A+', color: 'text-green-600', message: 'Outstanding! You\'re a Recipe Master!' }
+  if (score >= 90) return { grade: 'A+', color: 'text-green-600', message: 'Outstanding! You&apos;re a Recipe Master!' }
   if (score >= 80) return { grade: 'A', color: 'text-green-500', message: 'Excellent culinary knowledge!' }
   if (score >= 70) return { grade: 'B+', color: 'text-blue-500', message: 'Great job! Keep cooking!' }
   if (score >= 60) return { grade: 'B', color: 'text-blue-400', message: 'Good work! Practice makes perfect.' }
@@ -51,7 +51,7 @@ export function getRandomElements<T>(array: T[], count: number): T[] {
   return shuffleArray(array).slice(0, count)
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

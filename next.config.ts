@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: true,
   },
- serverExternalPackages: [],
+  serverExternalPackages: [],
+  
   // Compiler optimizations
   compiler: {
     // Remove console.logs in production
@@ -62,8 +63,8 @@ const nextConfig: NextConfig = {
   // Generate ETags for caching
   generateEtags: true,
 
-  // Enable SWC minification
-  swcMinify: true,
+  // SWC minification is enabled by default in Next.js 15
+  // Removed: swcMinify: true,
 
   // Trailing slash handling
   trailingSlash: true,
@@ -129,8 +130,7 @@ const nextConfig: NextConfig = {
   },
 
   // Redirects for SEO
-  redirects: async () => []
-  ,
+  redirects: async () => [],
 
   // Output configuration for different deployment targets
   output: 'standalone', // For Docker deployments
